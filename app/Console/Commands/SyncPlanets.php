@@ -2,10 +2,10 @@
 
 namespace App\Console\Commands;
 
+use App\Synchronizer\Synchronizer;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
 
 class SyncPlanets extends Command
 {
@@ -35,5 +35,36 @@ class SyncPlanets extends Command
             return;
         }
 
+        $url = $this->argument('url');
+
+        if (!$this->option('queue')) {
+            $this->sync($url);
+            return;
+        }
+
+
+
     }
+
+    private function sync(string $url): void
+    {
+        $pageCount = 1;
+        while (!Http::get("$url/?page=$pageCount")->notFound()) {
+            $pageCount++;
+        }
+
+        $synchronizer = resolve(Synchronizer::class);
+
+        $progressBar = $this->output->createProgressBar($pageCount - 1);
+
+        $progressBar->start();
+        for ($i = 1; $i < $pageCount; $i++) {
+            $synchronizer->sync($url);
+            $progressBar->advance();
+        }
+
+        $progressBar->finish();
+    }
+
+
 }
