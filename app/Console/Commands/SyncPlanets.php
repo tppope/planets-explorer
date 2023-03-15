@@ -59,8 +59,8 @@ class SyncPlanets extends Command
         $progressBar = $this->output->createProgressBar($pageCount - 1);
 
         $progressBar->start();
-        for ($i = 1; $i < $pageCount; $i++) {
-            $synchronizer->sync($url);
+        for ($page = 1; $page < $pageCount; $page++) {
+            $synchronizer->sync("$url/?page=$page");
             $progressBar->advance();
         }
 
