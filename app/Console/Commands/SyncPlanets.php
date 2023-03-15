@@ -21,7 +21,7 @@ class SyncPlanets extends Command
      *
      * @var string
      */
-    protected $description = 'Sync the list of all known planets and their residents from https://swapi.py4e.com/';
+    protected $description = 'Sync the list of all known planets and their residents from given url';
 
     /**
      * Execute the console command.
