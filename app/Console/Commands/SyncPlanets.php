@@ -14,7 +14,7 @@ class SyncPlanets extends Command
      *
      * @var string
      */
-    protected $signature = 'sync:planets';
+    protected $signature = 'sync:planets {url} {--Q|queue}';
 
     /**
      * The console command description.
