@@ -2,8 +2,10 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\Synchronize;
 use App\Synchronizer\Synchronizer;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
 
@@ -39,10 +41,9 @@ class SyncPlanets extends Command
 
         if (!$this->option('queue')) {
             $this->sync($url);
-            return;
+        } else {
+            $this->queueSync($url);
         }
-
-
 
     }
 
@@ -66,5 +67,29 @@ class SyncPlanets extends Command
         $progressBar->finish();
     }
 
+    private function queueSync(string $url): void
+    {
+        $batch = Bus::batch([])->dispatch();
 
+        $page = 1;
+        $pageUrl = "$url/?page=$page";
+        while (!Http::get($pageUrl)->notFound()) {
+            $batch->add(new Synchronize($pageUrl));
+            $pageUrl = "$url/?page=" . ++$page;
+        }
+
+        $progressBar = $this->output->createProgressBar(100);
+
+        $progressBar->start();
+        while ($batch->progress() < 100) {
+            $progressBar->setProgress($batch->progress());
+            $batch = $batch->fresh();
+            sleep(1);
+        }
+
+        $progressBar->setProgress($batch->progress());
+
+        $progressBar->finish();
+
+    }
 }
