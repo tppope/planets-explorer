@@ -3,6 +3,9 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class SyncPlanets extends Command
 {
@@ -25,6 +28,12 @@ class SyncPlanets extends Command
      */
     public function handle(): void
     {
-        //
+        $validator = Validator::make($this->arguments(), ['url' => 'url']);
+
+        if ($validator->fails()) {
+            $this->error($validator->errors()->first());
+            return;
+        }
+
     }
 }
