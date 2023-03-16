@@ -8,8 +8,15 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     @vite('resources/sass/app.scss')
+
+    @vite('resources/js/app.js')
+
+    @livewireStyles
 </head>
 <body>
+<main {{ $attributes }}>
 {{ $slot }}
+</main>
 </body>
+@livewireScripts
 </html>
