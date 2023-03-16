@@ -2,12 +2,12 @@
 
 namespace App\Synchronizer;
 
+use App\Models\Planet;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 
 class PlanetsSynchronizer implements Synchronizer
 {
-
     public function __construct(private readonly Synchronizer $residentSynchronizer)
     {
     }
@@ -21,8 +21,20 @@ class PlanetsSynchronizer implements Synchronizer
         }
 
         $response->collect('results')->each(function ($planet) {
+            Planet::query()->updateOrCreate(
+                ['id' => basename($planet['url'])],
+                collect($planet)->only([
+                    'name',
+                    'rotation_period',
+                    'orbital_period',
+                    'diameter',
+                    'climate',
+                    'gravity',
+                    'terrain',
+                    'surface_water',
+                    'population'])->all()
+            );
             $this->syncResidents(collect($planet['residents']));
-            return false;
         });
     }
 
@@ -30,7 +42,6 @@ class PlanetsSynchronizer implements Synchronizer
     {
         $residents->each(function (string $residentUrl) {
             $this->residentSynchronizer->sync($residentUrl);
-            return false;
         });
     }
 }
