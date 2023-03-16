@@ -13,11 +13,19 @@ abstract class StarWarsModel extends Model
      */
     protected static function booted(): void
     {
-        static::saving(function (StarWarsModel $planet) {
-            foreach ($planet->getAttributes() as $attribute => $value) {
+        static::saving(function (StarWarsModel $starWarsModel) {
+            foreach ($starWarsModel->getAttributes() as $attribute => $value) {
                 $notAllowedValues = collect(['unknown', 'none']);
                 if ($notAllowedValues->contains($value)) {
-                    $planet->setAttribute($attribute, null);
+                    $starWarsModel->setAttribute($attribute, null);
+                }
+            }
+        });
+
+        static::retrieved(function (StarWarsModel $starWarsModel) {
+            foreach ($starWarsModel->getAttributes() as $attribute => $value) {
+                if (is_null($value)) {
+                    $starWarsModel->setAttribute($attribute, '- - -');
                 }
             }
         });
