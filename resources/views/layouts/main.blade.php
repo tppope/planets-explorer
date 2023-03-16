@@ -13,7 +13,7 @@
 
     @livewireStyles
 </head>
-<body>
+<body class="flex flex-col h-screen">
 <main {{ $attributes }}>
 {{ $slot }}
 </main>
