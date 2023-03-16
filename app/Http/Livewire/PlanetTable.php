@@ -3,9 +3,10 @@
 namespace App\Http\Livewire;
 
 use App\Models\Planet;
+use Illuminate\Database\Eloquent\Builder;
 use Rappasoft\LaravelLivewireTables\DataTableComponent;
 use Rappasoft\LaravelLivewireTables\Views\Column;
-use Rappasoft\LaravelLivewireTables\Views\Filters\SelectFilter;
+use Rappasoft\LaravelLivewireTables\Views\Filters\MultiSelectDropdownFilter;
 
 class PlanetTable extends DataTableComponent
 {
@@ -20,13 +21,45 @@ class PlanetTable extends DataTableComponent
 
     public function filters(): array
     {
+        $planets = Planet::all(['diameter', 'rotation_period', 'gravity']);
+        $diameterOptions = $planets->pluck('diameter')->unique()->sort();
+        $rotationPeriodOptions = $planets->pluck('rotation_period')->unique()->sort();
+        $gravityOptions = $planets->pluck('gravity')->unique()->sort();
+
         return [
-            SelectFilter::make('Active')
-                ->options([
-                    '' => 'All',
-                    'yes' => 'Yes',
-                    'no' => 'No',
-                ]),
+            MultiSelectDropdownFilter::make('Diameter')
+                ->options(
+                    $diameterOptions->combine($diameterOptions)->toArray()
+                )->filter(function (Builder $builder, array $values) {
+                    $values = collect($values);
+                    if ($values->contains('- - -')) {
+                        $builder->where('diameter', null);
+                        $values = $values->reject(fn (string $value) => $value === '- - -');
+                    }
+                    $builder->orWhereIn('diameter', $values);
+                }),
+            MultiSelectDropdownFilter::make('Rotation Period')
+                ->options(
+                    $rotationPeriodOptions->combine($rotationPeriodOptions)->toArray()
+                )->filter(function (Builder $builder, array $values) {
+                    $values = collect($values);
+                    if ($values->contains('- - -')) {
+                        $builder->where('rotation_period', null);
+                        $values = $values->reject(fn (string $value) => $value === '- - -');
+                    }
+                    $builder->orWhereIn('rotation_period', $values);
+                }),
+            MultiSelectDropdownFilter::make('Gravity')
+                ->options(
+                    $gravityOptions->combine($gravityOptions)->toArray()
+                )->filter(function (Builder $builder, array $values) {
+                    $values = collect($values);
+                    if ($values->contains('- - -')) {
+                        $builder->where('gravity', null);
+                        $values = $values->reject(fn (string $value) => $value === '- - -');
+                    }
+                    $builder->orWhereIn('gravity', $values);
+                }),
         ];
     }
 
