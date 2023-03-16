@@ -34,23 +34,23 @@ class SyncPlanets extends Command
 
         if ($validator->fails()) {
             $this->error($validator->errors()->first());
+
             return;
         }
 
         $url = $this->argument('url');
 
-        if (!$this->option('queue')) {
+        if (! $this->option('queue')) {
             $this->sync($url);
         } else {
             $this->queueSync($url);
         }
-
     }
 
     private function sync(string $url): void
     {
         $pageCount = 1;
-        while (!Http::get("$url/?page=$pageCount")->notFound()) {
+        while (! Http::get("$url/?page=$pageCount")->notFound()) {
             $pageCount++;
         }
 
@@ -73,9 +73,9 @@ class SyncPlanets extends Command
 
         $page = 1;
         $pageUrl = "$url/?page=$page";
-        while (!Http::get($pageUrl)->notFound()) {
+        while (! Http::get($pageUrl)->notFound()) {
             $batch->add(new Synchronize($pageUrl));
-            $pageUrl = "$url/?page=" . ++$page;
+            $pageUrl = "$url/?page=".++$page;
         }
 
         $progressBar = $this->output->createProgressBar(100);
@@ -90,6 +90,5 @@ class SyncPlanets extends Command
         $progressBar->setProgress($batch->progress());
 
         $progressBar->finish();
-
     }
 }

@@ -17,7 +17,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-
         $this->app->when(SyncPlanets::class)
             ->needs(Synchronizer::class)
             ->give(PlanetsSynchronizer::class);
@@ -25,7 +24,6 @@ class AppServiceProvider extends ServiceProvider
         $this->app->when(PlanetsSynchronizer::class)
             ->needs(Synchronizer::class)
             ->give(ResidentSynchronizer::class);
-
     }
 
     /**
