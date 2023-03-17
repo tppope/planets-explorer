@@ -1,0 +1,22 @@
+type Planet {
+    id: ID!,
+    name: String,
+    rotation_period: Int,
+    orbital_period: Int,
+    diameter: Int,
+    climate: String,
+    gravity: String,
+    terrain: String,
+    surface_water: String,
+    population: Int,
+}
+
+type Terrain {
+    name: String,
+    percentage: Float!
+}
+
+extend type Query {
+    largestPlanets(limit: Int @limit): [Planet!] @all @orderBy(column: "diameter", direction: DESC)
+    terrainDistribution: [Terrain!]!
+}

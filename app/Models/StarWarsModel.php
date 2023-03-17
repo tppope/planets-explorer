@@ -21,13 +21,5 @@ abstract class StarWarsModel extends Model
                 }
             }
         });
-
-        static::retrieved(function (StarWarsModel $starWarsModel) {
-            foreach ($starWarsModel->getAttributes() as $attribute => $value) {
-                if (is_null($value)) {
-                    $starWarsModel->setAttribute($attribute, '- - -');
-                }
-            }
-        });
     }
 }
