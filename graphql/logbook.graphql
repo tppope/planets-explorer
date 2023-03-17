@@ -1,0 +1,20 @@
+input CreateLogbookInput @validator {
+    mood: MoodEnum!
+    weather: WeatherEnum!
+    space_location: String!
+    note: String!
+}
+
+type Logbook {
+    id: ID!
+    mood: MoodEnum!
+    weather: WeatherEnum!
+    space_location: String!
+    note: String!
+    created_at: DateTime!
+    updated_at: DateTime!
+}
+
+extend type Mutation {
+    createLogbookRecord(input: CreateLogbookInput! @spread): Logbook! @create
+}
