@@ -4,6 +4,7 @@ namespace App\Http\Livewire;
 
 use App\Models\Planet;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use Rappasoft\LaravelLivewireTables\DataTableComponent;
 use Rappasoft\LaravelLivewireTables\Views\Column;
 use Rappasoft\LaravelLivewireTables\Views\Filters\MultiSelectDropdownFilter;
@@ -21,10 +22,10 @@ class PlanetTable extends DataTableComponent
 
     public function filters(): array
     {
-        $planets = Planet::all(['diameter', 'rotation_period', 'gravity']);
-        $diameterOptions = $planets->pluck('diameter')->unique()->sort();
-        $rotationPeriodOptions = $planets->pluck('rotation_period')->unique()->sort();
-        $gravityOptions = $planets->pluck('gravity')->unique()->sort();
+        $planets = Planet::all(['diameter', 'rotation_period', 'gravity'])->toBase();
+        $diameterOptions = $this->prepareOptions($planets->pluck('diameter'));
+        $rotationPeriodOptions = $this->prepareOptions($planets->pluck('rotation_period'));
+        $gravityOptions = $this->prepareOptions($planets->pluck('gravity'));
 
         return [
             MultiSelectDropdownFilter::make('Diameter')
@@ -69,23 +70,33 @@ class PlanetTable extends DataTableComponent
             Column::make('Id', 'id')
                 ->sortable(),
             Column::make('Name', 'name')
-                ->sortable()->searchable(),
+                ->sortable()->searchable()->format($this->formatNullValue(...)),
             Column::make('Rotation Period', 'rotation_period')
-                ->sortable(),
+                ->sortable()->format($this->formatNullValue(...)),
             Column::make('Orbital Period', 'orbital_period')
-                ->sortable(),
+                ->sortable()->format($this->formatNullValue(...)),
             Column::make('Diameter', 'diameter')
-                ->sortable(),
+                ->sortable()->format($this->formatNullValue(...)),
             Column::make('Climate', 'climate')
-                ->sortable(),
+                ->sortable()->format($this->formatNullValue(...)),
             Column::make('Gravity', 'gravity')
-                ->sortable(),
+                ->sortable()->format($this->formatNullValue(...)),
             Column::make('Terrain', 'terrain')
-                ->sortable(),
+                ->sortable()->format($this->formatNullValue(...)),
             Column::make('Surface Water', 'surface_water')
-                ->sortable(),
+                ->sortable()->format($this->formatNullValue(...)),
             Column::make('Population', 'population')
-                ->sortable(),
+                ->sortable()->format($this->formatNullValue(...)),
         ];
+    }
+
+    private function prepareOptions(Collection $options): Collection
+    {
+        return $options->unique(strict: true)->map($this->formatNullValue(...))->sort();
+    }
+
+    private function formatNullValue($value): string
+    {
+        return $value ?? '- - -';
     }
 }
