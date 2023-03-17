@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Planet;
+use App\Models\Resident;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -64,7 +65,7 @@ class PlanetTest extends TestCase
         }
         ')->assertJsonFragment([
             'name' => 'rocky deserts',
-            'percentage' => 2 / 3,
+            'percentage' => 2 / 3 * 100,
         ]);
     }
 
