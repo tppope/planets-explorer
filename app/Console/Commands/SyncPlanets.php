@@ -16,7 +16,7 @@ class SyncPlanets extends Command
      *
      * @var string
      */
-    protected $signature = 'sync:planets {url} {--Q|queue}';
+    protected $signature = 'sync:planets {url=https://swapi.py4e.com/api/planets/} {--Q|queue}';
 
     /**
      * The console command description.
