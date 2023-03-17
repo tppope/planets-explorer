@@ -19,7 +19,32 @@ better blade files organization. Application also provide GraphQL endpoints for 
 and for creating a new record in the logbook. Try endpoints in ```'application_url'/graphiql```. With PHPUnit tests we
 covered all GraphQL endpoints. In GraphQLServiceProvider we register new enum types. As PHP code style fixer we use Laravel Pint.
 
+## Installation on the dev enviroment
 
+1. installed docker is required
+2. create ```.env``` file from ```.env.example``` file
+3. no changes are required when you want to run this project on its docker containers
+4. ```QUEUE_CONNECTION``` variable in ```.env.example``` file is set to ```redis``` because redis server will be running
+   in docker
+5. run ```docker run --rm \ ```<br>
+   ```-u "$(id -u):$(id -g)" \ ```<br>
+   ```-v "$(pwd):/var/www/html" \ ```<br>
+   ```-w /var/www/html \ ```<br>
+   ```laravelsail/php82-composer:latest \ ```<br>
+   ```composer install --ignore-platform-reqs``` to install application dependencies and also Laravel Sail
+6. run ```./vendor/bin/sail up``` to run all containers in ```docker-compose.yml``` (php server, mysql server, redis
+   server etc.)
+7. if you want, create sail shell alias with ```alias sail='[ -f sail ] && sh sail || sh vendor/bin/sail'```
+8. run ```sail artisan key:generate``` to generate applications key
+9. run ```sail artisan migrate``` to run database migrations
+10. run ```sail artisan queue:work``` to run queue worker (run more workers in more terminals for distributing jobs and
+    parallel running)
+11. run ```sail artisan sync:planets``` to sync planets from default url ```https://swapi.py4e.com/api/planets``` or
+    specify url as command argument. For queued planet synchronization use ```-Q``` or ```--queue``` option with running
+    queue workers
+12. run ```sail npm run dev``` for vite dev server for realtime building frontend files or build them by
+    running ```sail npm run build```
+13. run ```sail test``` to run PHPUnit tests
 
 ## License
 
