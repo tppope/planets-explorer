@@ -8,6 +8,6 @@ class Planet extends StarWarsModel
 {
     public function residents(): HasMany
     {
-        return $this->hasMany(Resident::class);
+        return $this->hasMany(Resident::class, 'homeworld_id');
     }
 }

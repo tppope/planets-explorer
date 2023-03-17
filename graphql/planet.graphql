@@ -11,12 +11,23 @@ type Planet {
     population: Int,
 }
 
-type Terrain {
+type TerrainDistribution {
     name: String,
+    percentage: Float!
+}
+
+type PlanetSpeciesDistribution {
+    planet_name: String
+    species_distribution: [SpeciesDistribution!]!
+}
+
+type SpeciesDistribution {
+    specie: String,
     percentage: Float!
 }
 
 extend type Query {
     largestPlanets(limit: Int @limit): [Planet!] @all @orderBy(column: "diameter", direction: DESC)
-    terrainDistribution: [Terrain!]!
+    terrainDistribution: [TerrainDistribution!]!
+    speciesDistribution: [PlanetSpeciesDistribution!]!
 }

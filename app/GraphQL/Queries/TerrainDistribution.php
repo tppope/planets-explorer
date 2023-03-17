@@ -22,7 +22,7 @@ final class TerrainDistribution
             ->countBy()
             ->map(fn (int $terrainCount, string $terrainName) => [
                 'name' => $terrainName,
-                'percentage' => $terrainCount / $planetCount,
+                'percentage' => $terrainCount / $planetCount * 100,
             ])->values()->toArray();
     }
 }
