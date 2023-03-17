@@ -67,4 +67,57 @@ class PlanetTest extends TestCase
             'percentage' => 2 / 3,
         ]);
     }
+
+    public function test_get_species_distribution(): void
+    {
+        $planet1 = Planet::query()->create([
+            'name' => 'Planet 1',
+        ]);
+
+        Resident::query()->create([
+            'name' => 'Resident 1',
+            'species' => 'Specie 1',
+            'homeworld_id' => $planet1->id,
+        ]);
+
+        Resident::query()->create([
+            'name' => 'Resident 2',
+            'species' => 'Specie 2',
+            'homeworld_id' => $planet1->id,
+        ]);
+
+        $planet2 = Planet::query()->create([
+            'name' => 'Planet 2',
+        ]);
+
+        Resident::query()->create([
+            'name' => 'Resident 3',
+            'species' => 'Specie 1',
+            'homeworld_id' => $planet2->id,
+        ]);
+
+        $this->graphQL(/** @lang GraphQL */ '
+        {
+            speciesDistribution {
+                planet_name
+                species_distribution {
+                    specie
+                    percentage
+                }
+            }
+        }
+        ')->assertJsonFragment([
+            'planet_name' => 'Planet 1',
+            'species_distribution' => [
+                [
+                    'specie' => 'Specie 1',
+                    'percentage' => 50.0,
+                ],
+                [
+                    'specie' => 'Specie 2',
+                    'percentage' => 50.0,
+                ],
+            ],
+        ]);
+    }
 }
